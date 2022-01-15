@@ -18,14 +18,13 @@ public class BlocksManager : MonoBehaviour
 
     public Vector3 LeftBottomBack;
     public readonly Vector3 BlockSize = new Vector3(0.5f, 0.5f, 0.5f);
-    public readonly Vector3 BlockSpacing = new Vector3(0.25f, 0.25f, 0.25f);
+    public readonly Vector3 BlockSpacing = new Vector3(0.15f, 0.15f, 0.15f);
 
     [SerializeField]
     private Transform gFP;
     [SerializeField]
     private Transform sGFP;
-    private MoveState state = MoveState.None;
-    private Block hitBl = null;
+    public Block hitBl = null;
     public Block[] BlockPrefabs;
     public GameObject ExplosionPrefab;
     public GameObject positionHolder;
@@ -51,6 +50,10 @@ public class BlocksManager : MonoBehaviour
         GS = GameSettings.Instance;
         gFP.position = new Vector3(-((GameManager.Constants.X - 1) * BlockSize.x / 2), 0.3f, -((GameManager.Constants.Z - 1) * BlockSize.z / 2));
         LeftBottomBack = gFP.position;
+        GameObject border = Instantiate(Resources.Load("Prefabs/Blocks/InvertedBlock"), gFP.position, Quaternion.identity) as GameObject;
+        border.name = "Gamefieldborder";
+        border.transform.localScale = new Vector3((GameManager.Constants.X-1)*BlockSize.x, (GameManager.Constants.Y - 1) * BlockSize.y, (GameManager.Constants.Z - 1) * BlockSize.z);
+
         if (GameManager.seed == 0)
             GameManager.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         GameManager.Random = new System.Random(GameManager.seed);
@@ -87,6 +90,11 @@ public class BlocksManager : MonoBehaviour
 
     #endregion
 
+    /// <summary>
+    /// Gets a Random block from a list
+    /// </summary>
+    /// <param name="blockPrefabs">The posibilities of blocks which can be picked</param>
+    /// <returns>Returns random Block</returns>
     private Block GetRandomBlock(Block[] blockPrefabs)
     {
         return blockPrefabs[GameManager.Random.Next(0, blockPrefabs.Length)];
@@ -100,11 +108,18 @@ public class BlocksManager : MonoBehaviour
     private void InstantiateAndPlaceNewBlock(Vector3Int position, Block newBlock)
     {
         Block blk = Instantiate(newBlock, LeftBottomBack + new Vector3(position.x * BlockSize.x, position.y * BlockSize.y, position.z * BlockSize.z), Quaternion.identity) as Block;
-        PotionHolder pH = Instantiate(positionHolder, LeftBottomBack + new Vector3(position.x * BlockSize.x, position.y * BlockSize.y, position.z * BlockSize.z), Quaternion.identity).GetComponent<PotionHolder>();
+        PositionHolder pH = Instantiate(positionHolder, LeftBottomBack + new Vector3(position.x * BlockSize.x, position.y * BlockSize.y, position.z * BlockSize.z), Quaternion.identity).GetComponent<PositionHolder>();
+
         blk.name = blk.blockstats.name + position;
         pH.name = position.ToString();
+
         blk.Assign(newBlock.blockstats._Color, position);
+        //blk.cJ.connectedAnchor = position;
+        pH.Position = position;
+
         blocks[position.x, position.y, position.z] = blk;
+
+        #region Managing History
         Transform pT = gFP.transform.Find("Level" + position.y);
         Transform spG = sGFP.transform.Find("Level" + position.y);
         if (pT == null)
@@ -118,7 +133,7 @@ public class BlocksManager : MonoBehaviour
         }
         blk.transform.parent = pT;
         pH.transform.parent = spG.transform;
-
+        #endregion
     }
 
     /// <summary>
@@ -134,6 +149,9 @@ public class BlocksManager : MonoBehaviour
                 }
     }
 
+    /// <summary>
+    /// Fills the Gamefield with blocks and destroys if there are still some
+    /// </summary>
     public void InitializeBlockAndSpawnPosition()
     {
         InitializeScore();
@@ -225,7 +243,7 @@ public class BlocksManager : MonoBehaviour
     /// <summary>
     /// Stops all coroutines for potential matches
     /// </summary>
-    private void StopCheckForPotentialMatches()
+    public void StopCheckForPotentialMatches()
     {
         if (AnimatePotentialMatchesCoroutine != null)
             StopCoroutine(AnimatePotentialMatchesCoroutine);
@@ -289,7 +307,7 @@ public class BlocksManager : MonoBehaviour
 
         foreach (Vector2Int column in columnsWithMissingBlock)
         {
-            var emptyItems = blocks.GetEmptyItemsOnColumn(column);
+            var emptyItems = blocks.GetEmptyItemsInColumn(column);
             foreach (var item in emptyItems)
             {
                 var go = GetRandomBlock(BlockPrefabs);
@@ -374,52 +392,10 @@ public class BlocksManager : MonoBehaviour
 
     #endregion
 
-    /// <summary>
-    /// The moving part
-    /// Needs to be changed for VR in near future
-    /// </summary>
-    //void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Escape))
-    //    {
-    //        pauseMenuCanvas.gameObject.SetActive(!pauseMenuCanvas.gameObject.activeSelf);
-    //    }
-
-    //    if (state == MoveState.None)
-    //    {
-    //        if (Input.GetMouseButtonDown(0))
-    //        {
-    //            var hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.zero);
-    //            if (hit.collider != null)
-    //            {
-    //                hitBl = hit.collider.gameObject.GetComponent<Block>();
-    //                state = MoveState.SelectionStarted;
-    //            }
-    //        }
-    //    }
-    //    else if (state == MoveState.SelectionStarted)
-    //    {
-    //        if (Input.GetMouseButton(0))
-    //        {
-    //            var hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.zero);
-
-    //            if (hit.collider != null && hit.collider.gameObject)
-    //            {
-    //                StopCheckForPotentialMatches();
-
-    //                if (!BlockUtilities.AreNeighbors(hitBl, hit.collider.gameObject.GetComponent<Block>()))
-    //                {
-    //                    state = MoveState.None;
-    //                }
-    //                else
-    //                {
-    //                    state = MoveState.Animating;
-    //                    StartCoroutine(FindMatchesAndCollapse(hit));
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+    private void OnApplicationPause(bool pause)
+    {
+        pauseMenuCanvas.gameObject.SetActive(!pauseMenuCanvas.gameObject.activeSelf);
+    }
 
     void LateUpdate()
     {
@@ -437,14 +413,13 @@ public class BlocksManager : MonoBehaviour
         }
     }
 
-    private IEnumerator FindMatchesAndCollapse(RaycastHit2D hit2)
+    /// <summary>
+    /// Checks for and collapses Matches.
+    /// </summary>
+    /// <param name="hitBl2">The block which will be switched with the moving. </param>
+    /// <returns>Returns an IEnumerator. </returns>
+    public IEnumerator FindMatchesAndCollapse(Block hitBl2)
     {
-        var hitBl2 = hit2.collider.gameObject.GetComponent<Block>();
-        blocks.Swap(hitBl, hitBl2);
-
-        hitBl.transform.DOMove(hitBl2.transform.position, GameManager.Constants.AnimationDuration, true);
-        hitBl2.transform.DOMove(hitBl.transform.position, GameManager.Constants.AnimationDuration, true);
-
         var hitBlMatchesInfo = blocks.GetMatches(hitBl);
         var hitBl2MatchesInfo = blocks.GetMatches(hitBl2);
 
@@ -452,11 +427,8 @@ public class BlocksManager : MonoBehaviour
 
         if (totalMatches.Count() < GameManager.Constants.MinimumMatches)
         {
-            hitBl.transform.DOMove(hitBl2.transform.position, GameManager.Constants.AnimationDuration, true);
-            hitBl2.transform.DOMove(hitBl.transform.position, GameManager.Constants.AnimationDuration, true);
-            yield return new WaitForSeconds(GameManager.Constants.AnimationDuration);
-
-            blocks.UndoSwap();
+            hitBl.RevertMove();
+            yield return new WaitForSeconds(GameManager.Constants.AnimationDuration * hitBl.moves.Count);
         }
 
         bool addBonus = totalMatches.Count() >= GameManager.Constants.MinimumMatchesForBonus &&
@@ -502,8 +474,6 @@ public class BlocksManager : MonoBehaviour
 
             timesRun++;
         }
-
-        state = MoveState.None;
         StartCheckForPotentialMatches();
 
     }
@@ -511,10 +481,10 @@ public class BlocksManager : MonoBehaviour
     #region Premade/Loaded Levels
 
     /// <summary>
-    /// Get's the specified block
+    /// Gets the specified block.
     /// </summary>
-    /// <param name="info">the info of the block (color type)</param>
-    /// <returns>Returns a Block-reference to be instantiated</returns>
+    /// <param name="info">the info of the block. (color type) </param>
+    /// <returns>Returns a Block-reference to be instantiated. </returns>
     private Block GetSpecificBlockOrBonusForPremadeLevel(string info)
     {
         var tokens = info.Split('_');
@@ -540,9 +510,9 @@ public class BlocksManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Creates a gamefield after the given "Save-File"
+    /// Creates a gamefield after the given "Save-File".
     /// </summary>
-    /// <param name="levelToLoad">The saved level which should be loaded</param>
+    /// <param name="levelToLoad">The saved level which should be loaded. </param>
     public void InitializeBlockAndSpawnPositionsFromPremadeLevel(string levelToLoad)
     {
         TextAsset txt = Resources.Load(GameManager.Constants._SavedFilesPath + levelToLoad) as TextAsset;
@@ -576,10 +546,10 @@ public class BlocksManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Parses the TextAsset to a readable array for further use
+    /// Parses the TextAsset to a readable array for further use.
     /// </summary>
-    /// <param name="levelToLoad">the file which should be parsed</param>
-    /// <returns>returns a array with the blocks already in position (only now need be instatiated)</returns>
+    /// <param name="levelToLoad">The file which should be parsed. </param>
+    /// <returns>Returns a array with the blocks already in position. (only now need be instatiated) </returns>
     public static string[,,] FillShapesArrayFromResourcesData(string levelToLoad)
     {
         string[,,] blocks = new string[GameManager.Constants.X, GameManager.Constants.Y, GameManager.Constants.Z];

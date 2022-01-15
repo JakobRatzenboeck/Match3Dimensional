@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum BlockType { NORMAL = 0, HBOMB = 1, VBOMB = 2, DBOMB = 4, BOMB = 8, SBOMB = 16 }
-public enum MoveState { None, SelectionStarted, Animating }
 
 [CreateAssetMenu(menuName = "Blockstats")]
 public class Blockstats : ScriptableObject

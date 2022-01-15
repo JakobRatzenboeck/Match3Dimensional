@@ -218,10 +218,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5737924244519358395, guid: 4320d4b155361744bb6e7c6ef6cc2e17,
+        type: 3}
+      propertyPath: m_RaycastTriggerInteraction
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7340354180458662903, guid: 4320d4b155361744bb6e7c6ef6cc2e17,
         type: 3}
       propertyPath: m_Name
       value: XR Setup
+      objectReference: {fileID: 0}
+    - target: {fileID: 8951602767888599730, guid: 4320d4b155361744bb6e7c6ef6cc2e17,
+        type: 3}
+      propertyPath: m_HitClosestOnly
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4320d4b155361744bb6e7c6ef6cc2e17, type: 3}
@@ -4387,7 +4397,7 @@ Transform:
   m_GameObject: {fileID: 2126373376}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2

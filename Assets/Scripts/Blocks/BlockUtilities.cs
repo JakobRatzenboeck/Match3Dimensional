@@ -45,11 +45,11 @@ public static class BlockUtilities
     }
 
     /// <summary>
-    /// Looks if two blocks are neighbors
+    /// Looks if two blocks are neighbors.
     /// </summary>
-    /// <param name="b1">One block</param>
-    /// <param name="b2">The other block</param>
-    /// <returns>Returns true if they are, false if not</returns>
+    /// <param name="b1">One block. </param>
+    /// <param name="b2">The other block. </param>
+    /// <returns>Returns true if they are neighbors, false if not. </returns>
     public static bool AreNeighbors(Block b1, Block b2)
     {
         return (new List<float> { 0, 45 }.Contains(Vector3.Dot(b1._position + Vector3.up, b2._position + Vector3.up)))
@@ -57,10 +57,10 @@ public static class BlockUtilities
     }
 
     /// <summary>
-    /// Gathers potential matches and then returns one
+    /// Gathers potential matches and then returns one.
     /// </summary>
-    /// <param name="field">The array in which the potential match</param>
-    /// <returns>Returns a random potential match</returns>
+    /// <param name="field">The array in which the potential match. </param>
+    /// <returns>Returns a random potential match. </returns>
     public static IEnumerable<Block> GetPotentialMatches(GameField field)
     {
         //list that will contain all the matches we find
@@ -74,12 +74,10 @@ public static class BlockUtilities
 
                     if (matches2 != null) matches.Add(matches2.ToList());
 
-                    //if we have >= 3 matches, return a random one
+                    //if >= 3 matches, return a random one
                     if (matches.Count >= 3)
                         return matches[GameManager.Random.Next(0, matches.Count - 1)];
 
-                    //if we are in the middle of the calculations/loops
-                    //and we have less than 3 matches, return a random one
                     if (x >= GameManager.Constants.X / 2 && matches.Count > 0 && matches.Count <= 2)
                         return matches[GameManager.Random.Next(0, matches.Count - 1)];
                 }
@@ -89,12 +87,12 @@ public static class BlockUtilities
     /// <summary>
     /// Searching if there is a posible match with the neighbors
     /// </summary>
-    /// <param name="x">The X-coordinate</param>
-    /// <param name="y">The Y-coordinate</param>
-    /// <param name="z">The Z-coordinate</param>
-    /// <param name="blacklistedAxis">Axes where there may be a neighbor but no possible match</param>
-    /// <param name="field">The field where the blocks are</param>
-    /// <returns>Retruns one posible match or null</returns>
+    /// <param name="x">The X-coordinate. </param>
+    /// <param name="y">The Y-coordinate. </param>
+    /// <param name="z">The Z-coordinate. </param>
+    /// <param name="blacklistedAxis">Axes where there may be a neighbor but no possible match. </param>
+    /// <param name="field">The field where the blocks are. </param>
+    /// <returns>Retruns one posible match or null. </returns>
     public static IEnumerable<Block> CheckNeighbors(int x, int y, int z, SortedDictionary<int, Axis> blacklist, GameField field)
     {
         List<Block> matches = new List<Block>();
@@ -179,7 +177,6 @@ public static class BlockUtilities
         //Tries other axises just to be save
         if (matches == null && indexer < 6)
         {
-            //Debug.LogWarning(dir + "|" + lineAxis);
             blacklistedAxes |= lineAxis;
             if (!blacklist.ContainsKey(dir))
             {
@@ -197,16 +194,16 @@ public static class BlockUtilities
     }
 
     /// <summary>
-    /// Searches a block ajacent, but not in line, to the block in question 
+    /// Searches a block ajacent, but not in line, to the block in question.
     /// </summary>
-    /// <param name="x">The x-Axis of the primary block</param>
-    /// <param name="y">The y-Axis of the primary block</param>
-    /// <param name="z">The z-Axis of the primary block</param>
-    /// <param name="matchPos">The distance relative to the primary block</param>
-    /// <param name="field">In which gamefield the blocks are</param>
-    /// <param name="lineAxis">On which axes or axis it can look for the same type</param>
-    /// <param name="lineAxisOut">On which axis it searched</param>
-    /// <returns>returns a possible canditade for a match</returns>
+    /// <param name="x">The x-coordinate of the Position. </param>
+    /// <param name="y">The y-coordinate of the Position. </param>
+    /// <param name="z">The z-coordinate of the Position. </param>
+    /// <param name="matchPos">The distance relative to the primary block. </param>
+    /// <param name="field">In which gamefield the blocks are. </param>
+    /// <param name="lineAxis">On which axes or axis it can look for the same type. </param>
+    /// <param name="lineAxisOut">On which axis it searched. </param>
+    /// <returns>Returns a possible canditade for a match. </returns>
     public static Block SearchNeighborDiagonal(int x, int y, int z, int matchPos, GameField field, Axis lineAxis, out Axis lineAxisOut)
     {
         SortedDictionary<Axis, List<Block>> candidates = new SortedDictionary<Axis, List<Block>>();
@@ -325,16 +322,16 @@ public static class BlockUtilities
     }
 
     /// <summary>
-    /// Searches a block ajacent to the block in question
+    /// Searches a block ajacent to the block in question.
     /// </summary>
-    /// <param name="x">the X-coordinate</param>
-    /// <param name="y">the Y-coordinate</param>
-    /// <param name="z">the Z-coordinate</param>
-    /// <param name="matchPos">the Position of the posible match it is part of[(x,y,z)/pos/pos]</param>
-    /// <param name="field">the whole array</param>
-    /// <param name="blacklistedAxis">Axes where there may be a neighbor but no possible match</param>
-    /// <param name="lineAxis">the axis the second same-colored block is</param>
-    /// <returns>Returns the second same-colored block</returns>
+    /// <param name="x">The x-coordinate of the Position. </param>
+    /// <param name="y">The y-coordinate of the Position. </param>
+    /// <param name="z">The z-coordinate of the Position. </param>
+    /// <param name="matchPos">The Position of the possible match if is part of [(x,y,z)/pos/pos]. </param>
+    /// <param name="field">The whole gamefield. </param>
+    /// <param name="blacklistedAxis">Axes where there may be a neighbor but no possible match. </param>
+    /// <param name="lineAxis">The axis the second same-colored block is. </param>
+    /// <returns>Returns the second same-colored block. </returns>
     public static Block SearchNeighborInLine(int x, int y, int z, int matchPos, GameField field, Axis lineAxis, out Axis lineAxisOut)
     {
         SortedDictionary<Axis, List<Block>> candidates = new SortedDictionary<Axis, List<Block>>();
@@ -396,11 +393,11 @@ public static class BlockUtilities
     }
 
     /// <summary>
-    /// Checks if given position is InBounds of the field(Array) and if the position in the field is not null
+    /// Checks if given position is InBounds of the gamefield and if the position in the field is not null.
     /// </summary>
-    /// <param name="pos">The Position which will be checked</param>
-    /// <param name="field">The field in which the nullcheck should happen</param>
-    /// <returns>Returns <code>true</code> if both the Position is in bounds and the place of the position in the field is not null</returns>
+    /// <param name="pos">The Position which will be checked. </param>
+    /// <param name="field">The field in which the nullcheck should happen. </param>
+    /// <returns>Returns <code>true</code> if both the Position is in bounds and the place of the position in the field is not null. </returns>
     public static bool PositionInBoundsBlockNotNull(Vector3Int pos, GameField field)
     {
         return (pos.x >= 0 && pos.x < GameManager.Constants.X) && (pos.y >= 0 && pos.y < GameManager.Constants.Y) && (pos.z >= 0 && pos.z < GameManager.Constants.Z) && field[pos.x, pos.y, pos.z] != null;

@@ -73,6 +73,7 @@ public class GameManager
         public static readonly int Match3Score = 60;
         public static readonly int SubsequentMatchScore = 1000;
 
+        public static readonly string _SelectedBlockTag = "Selected";
         public static readonly string _SavedFilesPath = "Saves/";
         public static readonly string _FullSavedFilesPath = "C:/Users/Jakob/Documents/Unity/GitHub/Match3Connect_v2/Assets/Resources/Saves/";
         //public static readonly string _SavedFiles = Application.persistentDataPath + "/Saves/";

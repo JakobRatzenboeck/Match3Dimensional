@@ -10,14 +10,21 @@ public enum Axis { None = 0, X = 1, Y = 2, Z = 4 }
 public class GameField
 {
     /// <summary>
-    /// The Array where all blocks are saved for easyer access
+    /// The Array where all blocks are saved for easyer access.
     /// </summary>
     private Block[,,] blocks = new Block[GameManager.Constants.X, GameManager.Constants.Y, GameManager.Constants.Z];
     /// <summary>
-    /// For Switching Blocks that may or may not need to move back to their original position
+    /// For Switching Blocks that may or may not need to move back to their original position.
     /// </summary>
     private SortedDictionary<int, List<Block>> backupMoves = new SortedDictionary<int, List<Block>>();
 
+    /// <summary>
+    /// The public acces of blocks.
+    /// </summary>
+    /// <param name="xAxis">The position of the X-Axis. </param>
+    /// <param name="yAxis">The position of the Y-Axis. </param>
+    /// <param name="zAxis">The position of the Z-Axis. </param>
+    /// <returns>Returns the block of given position. </returns>
     public Block this[int xAxis, int yAxis, int zAxis]
     {
         get
@@ -32,18 +39,21 @@ public class GameField
         }
     }
 
+    /// <summary>
+    /// Get the Size of the Gamefield.
+    /// </summary>
+    /// <returns>Returns a Vector3Int of the Gamfield-Size. </returns>
     public Vector3Int GetBlocksSize()
     {
         return new Vector3Int(blocks.GetUpperBound(0), blocks.GetUpperBound(1), blocks.GetUpperBound(2));
     }
 
-
     /// <summary>
-    /// Swaps to blocks position(in the blocks and the blocks on the array)
+    /// Swaps to blocks position. (in the blocks and the blocks on the array)
     /// </summary>
-    /// <param name="b1">The primary block</param>
-    /// <param name="b2">The secondary block</param>
-    /// <param name="undo">If the move should be undone</param>
+    /// <param name="b1">The primary block. </param>
+    /// <param name="b2">The secondary block. </param>
+    /// <param name="undo">If the move should be undone. </param>
     public void Swap(Block b1, Block b2, bool undo = false)
     {
         if (!undo)
@@ -61,22 +71,12 @@ public class GameField
         Block.SwapPosition(b1, b2);
     }
 
+    #region Normal-Search-Methods
     /// <summary>
-    /// Unswaps the LAST move
+    /// Searches for adjacent block-color on the x-axis.
     /// </summary>
-    public void UndoSwap()
-    {
-        if (backupMoves == null || backupMoves.Count <= 0)
-            throw new System.Exception("There is no Backup!!!!");
-        else
-            Swap(backupMoves[backupMoves.Count - 1][0], backupMoves[backupMoves.Count - 1][1], true);
-    }
-
-    /// <summary>
-    /// Searches for adjacent block-color on the x-axis
-    /// </summary>
-    /// <param name="bk">The Block in question of making a connected line</param>
-    /// <returns>Returns a connected line of blocks if existing</returns>
+    /// <param name="bk">The Block in question of making a connected line. </param>
+    /// <returns>Returns a connected line of blocks if existing. </returns>
     private IEnumerable<Block> GetXMatches(Block bk)
     {
         List<Block> matches = new List<Block>();
@@ -119,10 +119,10 @@ public class GameField
         return matches;
     }
     /// <summary>
-    /// Searches for adjacent block-color on the y-axis
+    /// Searches for adjacent block-color on the y-axis.
     /// </summary>
-    /// <param name="bk">The Block in question of making a connected line</param>
-    /// <returns>Returns a connected line of blocks if existing</returns>
+    /// <param name="bk">The Block in question of making a connected line. </param>
+    /// <returns>Returns a connected line of blocks if existing. </returns>
     private IEnumerable<Block> GetYMatches(Block bk)
     {
         List<Block> matches = new List<Block>();
@@ -166,10 +166,10 @@ public class GameField
         return matches;
     }
     /// <summary>
-    /// Searches for adjacent block-color on the z-axis
+    /// Searches for adjacent block-color on the z-axis.
     /// </summary>
-    /// <param name="bk">The Block in question of making a connected line</param>
-    /// <returns>Returns a connected line of blocks if existing</returns>
+    /// <param name="bk">The Block in question of making a connected line. </param>
+    /// <returns>Returns a connected line of blocks if existing. </returns>
     private IEnumerable<Block> GetZMatches(Block bk)
     {
         List<Block> matches = new List<Block>();
@@ -211,13 +211,15 @@ public class GameField
 
         return matches;
     }
+    #endregion
 
+    #region Bonus-Block-Methods
     /// <summary>
-    /// Get's an entire line, because of a line-bonus-block
+    /// Gets an entire line, because of a line-bonus-block.
     /// </summary>
-    /// <param name="b">The block which is the line-bonus-type</param>
-    /// <param name="axis">The axis the line goes</param>
-    /// <returns>Returns a 'List' of Blocks in the line</returns>
+    /// <param name="b">The block which is the line-bonus-type. </param>
+    /// <param name="axis">The axis the line goes. </param>
+    /// <returns>Returns a 'List' of Blocks in the line. </returns>
     private IEnumerable<Block> GetEntireLine(Block b, Axis axis)
     {
         List<Block> matches = new List<Block>();
@@ -239,12 +241,11 @@ public class GameField
             }
         return matches;
     }
-
     /// <summary>
-    /// Get's a 3x3x3-block of blocks, because of a bomb-bonus-block
+    /// Gets a 3x3x3-block of blocks, because of a bomb-bonus-block.
     /// </summary>
-    /// <param name="b">The block with the bomb-bonus-type</param>
-    /// <returns>Returns a big block(3x3x3) of blocks</returns>
+    /// <param name="b">The block with the bomb-bonus-type. </param>
+    /// <returns>Returns a big block(3x3x3) of blocks. </returns>
     private IEnumerable<Block> GetEntireBigBlock(Block b)
     {
         List<Block> matches = new List<Block>();
@@ -260,12 +261,11 @@ public class GameField
         }
         return matches;
     }
-
     /// <summary>
-    /// Get's all blocks of the same color, because of a special-bonus-block
+    /// Gets all blocks of the same color, because of a special-bonus-block.
     /// </summary>
-    /// <param name="b">the block with the special-bonus</param>
-    /// <returns>Returns all blocks of the same color as the input-block</returns>
+    /// <param name="b">The block with the special-bonus. </param>
+    /// <returns>Returns all blocks of the same color as the input-block. </returns>
     private IEnumerable<Block> GetEntireBlockColor(Block b)
     {
         List<Block> matches = new List<Block>();
@@ -281,7 +281,14 @@ public class GameField
                 }
         return matches;
     }
+    #endregion
 
+    /// <summary>
+    /// If the match contains a bonus.
+    /// </summary>
+    /// <param name="matches">The blocks which form the matches. </param>
+    /// <param name="bonus">The speculated bonus. </param>
+    /// <returns>Returns the block with the bonus. </returns>
     private Block ContainsLineBonus(List<Block> matches, BlockType bonus)
     {
         if (matches.Count >= GameManager.Constants.MinimumMatches)
@@ -297,6 +304,11 @@ public class GameField
         return null;
     }
 
+    /// <summary>
+    /// Gets all the all connected lines which are part of the match.
+    /// </summary>
+    /// <param name="block">The block which is moved. </param>
+    /// <returns>Returns all connected lines of the match and aditional info, like bonuses. </returns>
     public MatchesInfo GetMatches(Block block)
     {
         MatchesInfo info = new MatchesInfo();
@@ -340,6 +352,12 @@ public class GameField
         info.AddBlockRange(matches);
         return info;
     }
+
+    /// <summary>
+    /// Gets all blocks which are part of a match.
+    /// </summary>
+    /// <param name="blocks">The blocks which Collapsed and where altered. </param>
+    /// <returns>Returns all blocks which are part of the match. </returns>
     public IEnumerable<Block> GetMatches(IEnumerable<Block> blocks)
     {
         List<Block> matches = new List<Block>();
@@ -350,11 +368,20 @@ public class GameField
         return matches.Distinct();
     }
 
+    /// <summary>
+    /// Removes a block from the Gamefield.
+    /// </summary>
+    /// <param name="block">The block which should get removed</param>
     public void Remove(Block block)
     {
         blocks[block._position.x, block._position.y, block._position.z] = null;
     }
 
+    /// <summary>
+    /// Collapses data blocks in given (x,z) places.
+    /// </summary>
+    /// <param name="level">The Rows on the x,z axis, which should collapse. </param>
+    /// <returns>Returns Info of all blocks which collapsed one Place down. </returns>
     public AlteredBlockInfo Collapse(IEnumerable<Vector2Int> level)
     {
         AlteredBlockInfo collapseInfo = new AlteredBlockInfo();
@@ -382,7 +409,12 @@ public class GameField
         return collapseInfo;
     }
 
-    public IEnumerable<Vector3Int> GetEmptyItemsOnColumn(Vector2Int column)
+    /// <summary>
+    /// Get all fields in a column of the Gamefield which are empty.
+    /// </summary>
+    /// <param name="column">The column where empty fields may be. </param>
+    /// <returns>Returns all positions in the column which are empty. </returns>
+    public IEnumerable<Vector3Int> GetEmptyItemsInColumn(Vector2Int column)
     {
         List<Vector3Int> emptyItems = new List<Vector3Int>();
         for (int y = 0; y < GameManager.Constants.Y; y++)
@@ -395,13 +427,13 @@ public class GameField
 
 
     /// <summary>
-    /// Returns the block of given Position
+    /// Get the block of given Position.
     /// </summary>
-    /// <param name="blockPos">The original position of the block</param>
-    /// <param name="x">If the x-Value is diferent from the blockPos</param>
-    /// <param name="y">If the y-Value is diferent from the blockPos</param>
-    /// <param name="z">If the z-Value is diferent from the blockPos</param>
-    /// <returns>A Block of the wanted Position.</returns>
+    /// <param name="blockPos">The original position of the block. </param>
+    /// <param name="x">If the x-Value is diferent from the blockPos. </param>
+    /// <param name="y">If the y-Value is diferent from the blockPos. </param>
+    /// <param name="z">If the z-Value is diferent from the blockPos. </param>
+    /// <returns>A Block of the wanted Position. </returns>
     public Block GetBlocksBlock(Vector3Int blockPos, Axis axis, int x = 0, int y = 0, int z = 0)
     {
         Vector3Int pos = new Vector3Int();
@@ -416,12 +448,12 @@ public class GameField
     }
 
     /// <summary>
-    /// Searches a block at a modified Vector
+    /// Searches a block at a modified Vector.
     /// </summary>
-    /// <param name="blockPos">The original position</param>
-    /// <param name="value">the distance of the adjacent Block (should be 1 or -1 to be adjacent)</param>
-    /// <param name="axis">the general axis the adjacent Block lies on</param>
-    /// <returns>Returns a block which is side by side,but not diagonal, with the blockPos.</returns>
+    /// <param name="blockPos">The original position. </param>
+    /// <param name="value">The distance of the adjacent Block. (should be 1 or -1 to be adjacent) </param>
+    /// <param name="axis">The general axis the adjacent Block lies on. </param>
+    /// <returns>Returns a block which is side by side,but not diagonal, with the blockPos. </returns>
     public Block GetAdjacentBlock(Vector3Int blockPos, int value, Axis axis = Axis.None)
     {
         Vector3Int pos = new Vector3Int();
