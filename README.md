@@ -1,6 +1,6 @@
 # Match3Dimensional
 <h2>What's that supposed to mean?!</h2>
-<p>3Connect3Dimensional is currently the project-name of my Match three puzzle VR-game, programmed in Unity.</p>
+<p>Match3Dimensional is currently the project-name of my Match three puzzle VR-game, programmed in Unity.</p>
 
 <h2>What's so special about it</h2>
 <p>It isn't only your everyday Match-three-puzzle, because it's played in VR, which means <strong>YOU</strong> can move around. 
