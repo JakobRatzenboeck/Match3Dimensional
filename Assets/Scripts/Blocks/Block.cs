@@ -11,9 +11,7 @@ public class Block : MonoBehaviour
     private XRGrabInteractable grabable;
     public ConfigurableJoint cJ;
     public List<Vector3Int> moves;
-    private GameObject classicMovement;
     private BlocksManager bm;
-    private GameField field;
 
     void Awake()
     {
@@ -27,7 +25,6 @@ public class Block : MonoBehaviour
         cJ = GetComponent<ConfigurableJoint>();
         moves = new List<Vector3Int>() { _position };
         bm = FindObjectOfType<BlocksManager>();
-        field = bm.blocks;
     }
 
     void Start()
@@ -114,10 +111,18 @@ public class Block : MonoBehaviour
         bm.hitBl = this;
         bm.StopCheckForPotentialMatches();
 
-        if (GameManager.Mode == GameMode.Classic)
+        if (GameManager.Mode == GameMode.Classic && bm.classicMovementRestraint.activeSelf)
         {
-            classicMovement = Instantiate(Resources.Load("Prefabs/Blocks/InvertedBlock") as GameObject, transform.position, Quaternion.identity);
+            bm.classicMovementRestraint.transform.position = bm.LeftBottomBack + Vector3.Scale(_position, bm.BlockSize);
+            bm.classicMovementRestraint.SetActive(true);
         }
+        if (GameManager.help)
+        {
+            bm.lineHelp.transform.position = bm.LeftBottomBack + Vector3.Scale(_position, bm.BlockSize);
+            bm.lineHelp.GetComponent<ResizeLineHelp>().ReseizeLineHelper(_position.x,GameManager.Constants.X-1-_position.x,_position.y, GameManager.Constants.Y - 1 - _position.y, _position.z, GameManager.Constants.Z - 1 - _position.z);
+            bm.lineHelp.SetActive(true);
+        }
+
         gameObject.tag = GameManager.Constants._SelectedBlockTag;
         cJ.xMotion = ConfigurableJointMotion.Free;
         cJ.yMotion = ConfigurableJointMotion.Free;
@@ -130,10 +135,17 @@ public class Block : MonoBehaviour
     /// <param name="args0"></param>
     public void OnDeselect(SelectExitEventArgs args0)
     {
-        if (classicMovement != null)
+        if (GameManager.Mode == GameMode.Classic && bm.classicMovementRestraint.activeSelf)
         {
-            Destroy(classicMovement);
+            bm.classicMovementRestraint.SetActive(false);
+            bm.classicMovementRestraint.transform.position = Vector3.zero;
         }
+        if (GameManager.help)
+        {
+            bm.lineHelp.SetActive(false);
+            bm.lineHelp.transform.position = Vector3.zero;
+        }
+
         if (!BlockUtilities.AreNeighbors(this, bm.blocks[moves[moves.Count - 1].x, moves[moves.Count - 1].y, moves[moves.Count - 1].z]))
         {
             RevertMove();

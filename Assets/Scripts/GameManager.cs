@@ -26,10 +26,6 @@ public class GameManager
         }
     }
 
-    public static int seed = 0;
-    public static System.Random Random;
-    public static GameMode Mode { get; set; }
-    public static long score;
 
     #region GameStates(Scenes and States)
     public GameState GameState { get; private set; }
@@ -45,6 +41,15 @@ public class GameManager
     #endregion
 
     #region Static references
+
+    public static int seed = 0;
+    public static System.Random Random;
+    public static long score;
+
+
+    public static GameMode Mode { get; set; }
+    public static bool help = true;
+
     private struct DefaultConstants
     {
         private static readonly int defaultX = 7;

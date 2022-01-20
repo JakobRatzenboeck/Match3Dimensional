@@ -49,6 +49,7 @@ public class SavedGames : MonoBehaviour
         for (int i = 0; i < txts.Length; i++)
         {
             Transform temp = Instantiate(containerPref).transform;
+            Debug.Log($"{i}: {temp.name} ({temp.position})");  
             temp.name = txts[i].name;
             temp.GetChild(0).GetComponent<TMP_Text>().text = txts[i].name;
             TextAsset txt = Resources.Load(GameManager.Constants._SavedFilesPath + txts[i].name) as TextAsset;

@@ -29,6 +29,8 @@ public class BlocksManager : MonoBehaviour
     public GameObject ExplosionPrefab;
     public GameObject positionHolder;
     public Block[] BonusPrefabs;
+    public GameObject classicMovementRestraint;
+    public GameObject lineHelp;
 
     private IEnumerator CheckPotentialMatchesCoroutine;
     private IEnumerator AnimatePotentialMatchesCoroutine;
@@ -52,7 +54,7 @@ public class BlocksManager : MonoBehaviour
         LeftBottomBack = gFP.position;
         GameObject border = Instantiate(Resources.Load("Prefabs/Blocks/InvertedBlock"), gFP.position, Quaternion.identity) as GameObject;
         border.name = "Gamefieldborder";
-        border.transform.localScale = new Vector3((GameManager.Constants.X-1)*BlockSize.x, (GameManager.Constants.Y - 1) * BlockSize.y, (GameManager.Constants.Z - 1) * BlockSize.z);
+        border.transform.localScale = new Vector3((GameManager.Constants.X / 2) * BlockSize.x, (GameManager.Constants.Y / 2) * BlockSize.y, (GameManager.Constants.Z / 2) * BlockSize.z);
 
         if (GameManager.seed == 0)
             GameManager.seed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
@@ -65,7 +67,7 @@ public class BlocksManager : MonoBehaviour
             InitializeBlockAndSpawnPosition();
         else
             InitializeBlockAndSpawnPositionsFromPremadeLevel(GameManager.textname);
-        if (GS._Help)
+        if (GameManager.help)
             StartCheckForPotentialMatches();
         text.text = GameManager.seed.ToString();
     }

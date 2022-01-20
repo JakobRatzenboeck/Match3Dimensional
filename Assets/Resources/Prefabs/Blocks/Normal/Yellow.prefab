@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7854884041619179330}
   - component: {fileID: -7628248214660134357}
   - component: {fileID: -5560979116489255481}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Yellow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,6 +114,10 @@ MonoBehaviour:
   blockstats: {fileID: 11400000, guid: 3537690de4e8dbe41864267b75a74610, type: 2}
   _color: {r: 0, g: 0, b: 0, a: 0}
   _position: {x: 0, y: 0, z: 0}
+  cJ: {fileID: 0}
+  moves: []
+  lineHelp: {fileID: 6538210726176545247, guid: 4cc95cb6d9d2f084aa64ac375a2d738c,
+    type: 3}
 --- !u!54 &7854884041619179330
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -142,7 +146,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0.5, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  m_ConnectedAnchor: {x: 0, y: 0.05, z: 0}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 2
@@ -306,7 +310,7 @@ MonoBehaviour:
       m_Calls: []
   m_AttachTransform: {fileID: 0}
   m_AttachEaseInTime: 0.15
-  m_MovementType: 1
+  m_MovementType: 0
   m_VelocityDamping: 1
   m_VelocityScale: 1
   m_AngularVelocityDamping: 1
@@ -315,11 +319,11 @@ MonoBehaviour:
   m_SmoothPosition: 0
   m_SmoothPositionAmount: 5
   m_TightenPosition: 0.5
-  m_TrackRotation: 1
+  m_TrackRotation: 0
   m_SmoothRotation: 0
   m_SmoothRotationAmount: 5
   m_TightenRotation: 0.5
-  m_ThrowOnDetach: 1
+  m_ThrowOnDetach: 0
   m_ThrowSmoothingDuration: 0.25
   m_ThrowSmoothingCurve:
     serializedVersion: 2
